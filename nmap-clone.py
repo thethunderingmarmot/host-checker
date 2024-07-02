@@ -1,7 +1,9 @@
 import struct
 import threading
 import socket
+import tkinter
 
+# Controlla se un singolo host è online utilizzando il protocollo ICMP
 def check_host(hostname):
     icmp_socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
 
@@ -28,6 +30,7 @@ def check_host(hostname):
 
     return False
 
+# Controlla all'infinito lo stato di un singolo host, eseguendo delle lambda in base a se è online o no
 def continuous_host_check(hostname, success_lambda, failure_lambda):
     while True:
         success = check_host(hostname)
@@ -36,4 +39,16 @@ def continuous_host_check(hostname, success_lambda, failure_lambda):
         else:
             failure_lambda()
 
-continuous_host_check("google.it", lambda: print("Ping pong!"), lambda: print("No response!"))
+# -------------------------------------------------------------------------------------------------------------------------
+
+# Main
+window = tkinter.Tk()
+window.title("nmap-clone")
+
+hosts_list = tkinter.Listbox(window, height=15, width=50)
+hosts_list.insert(0, "test2")
+
+tkinter.mainloop()
+
+#ping_thread = threading.Thread(target=lambda: continuous_host_check("google.it", lambda: print("Ping pong!"), lambda: print("No response!")))
+#ping_thread.start()
