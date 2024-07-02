@@ -119,7 +119,7 @@ def add_host_label(event = None, last_label_added = None, default_timeout = 5):
     # Viene creata una nuova Label per mostrare lo stato dell'host
     new_label = tkinter.Label(hosts_container.scrollable_frame, text=hostname + " - waiting", background="cadet blue")
     new_label.pack()
-    
+
     # Viene creato un oggetto Host a cui si passa una lambda che gestirà l'aggiornamento della label
     new_host = Host(hostname, default_timeout, lambda host: update_label(new_label, host))
     # Si inizia a fare il check continuo in un altro thread sull'Host
@@ -137,15 +137,11 @@ hosts_list = []
 # Creazione della finestra
 window = tkinter.Tk()
 window.title("host-checker")
-window.minsize(400, 300)
-window.maxsize(400, 300)
-
-# Creazione dello spazio dedicato a mostrare gli host
-hosts_container = ScrollableFrame(window, width=200)
-hosts_container.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True)
+window.minsize(200, 200)
+window.maxsize(200, 200)
 
 input_container = tkinter.Frame(window)
-input_container.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True)
+input_container.pack(fill=tkinter.BOTH, expand=True)
 
 # Creazione del label di indicazione
 indication_label = tkinter.Label(input_container, text="Inserire un hostname")
@@ -162,5 +158,9 @@ hostname_field.bind("<Return>", add_host_label)
 # Creazione del pulsante che aggiunge l'hostname
 add_button = tkinter.Button(input_container, text="Aggiungi", command=add_host_label)
 add_button.pack()
+
+# Creazione dello spazio dedicato a mostrare gli host
+hosts_container = ScrollableFrame(window, width=150)
+hosts_container.pack(fill=tkinter.BOTH, expand=True)
 
 tkinter.mainloop()
