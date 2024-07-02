@@ -124,9 +124,9 @@ title_label.pack()
 
 input_hostname = tkinter.StringVar()
 
-ip_field = tkinter.Entry(window, textvariable=input_hostname)
-ip_field.bind("<Return>", add_host)
-ip_field.pack()
+hostname_field = tkinter.Entry(window, textvariable=input_hostname)
+hostname_field.bind("<Return>", add_host)
+hostname_field.pack()
 
 add_button = tkinter.Button(window, text="Aggiungi", command=add_host)
 add_button.pack()
