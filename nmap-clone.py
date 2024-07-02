@@ -10,6 +10,7 @@ def get_checksum(source):
         checksum += (source[i] << 8) + source[i + 1]
     checksum = (checksum >> 16) + (checksum & 0xFFFF)
     checksum = ~checksum & 0xFFFF
+    return checksum
 
 # Controlla se un singolo host è online utilizzando il protocollo ICMP
 def check_host(hostname):
