@@ -81,6 +81,27 @@ class Host:
         self.linked_thread.daemon = True
         self.linked_thread.start()
 
+class ScrollableFrame(tkinter.Frame):
+    def __init__(self, container, width, *args, **kwargs):
+        super().__init__(container, *args, **kwargs)
+        canvas = tkinter.Canvas(self, width=width)
+        scrollbar = tkinter.Scrollbar(self, orient="vertical", command=canvas.yview)
+        self.scrollable_frame = tkinter.Frame(canvas)
+
+        self.scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(
+                scrollregion=canvas.bbox("all")
+            )
+        )
+
+        canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
 # Gestisce l'aggiornamento di una label in base al cambio di stato di un Host
 def update_label(label:tkinter.Label, host: Host):
     if(host.status == utils.Status.ONLINE):
@@ -91,16 +112,16 @@ def update_label(label:tkinter.Label, host: Host):
         label.config(text=host.hostname + " - error", background="orange red")
 
 # Gestisce l'aggiunta di un nuovo host
-def add_host(event = None):
+def add_host_label(event = None, last_label_added = None, default_timeout = 5):
     # Prende l'hostname inserito nell'Entry
     hostname = input_hostname.get()
 
-    # Viene creata una nuova Label che mostrera lo stato dell'host
-    new_label = tkinter.Label(hosts_frame, text=hostname + " - waiting", background="cadet blue")
+    # Viene creata una nuova Label per mostrare lo stato dell'host
+    new_label = tkinter.Label(hosts_container.scrollable_frame, text=hostname + " - waiting", background="cadet blue")
     new_label.pack()
-
+    
     # Viene creato un oggetto Host a cui si passa una lambda che gestirà l'aggiornamento della label
-    new_host = Host(hostname, timeout, lambda host: update_label(new_label, host))
+    new_host = Host(hostname, default_timeout, lambda host: update_label(new_label, host))
     # Si inizia a fare il check continuo in un altro thread sull'Host
     new_host.check_always_threaded()
 
@@ -111,9 +132,6 @@ def add_host(event = None):
 
 # ----------------------------------------------------------------------------------------------------------
 
-# Secondi di attesa tra un ping e l'altro
-timeout = 5
-
 hosts_list = []
 
 # Creazione della finestra
@@ -122,24 +140,27 @@ window.title("host-checker")
 window.minsize(400, 300)
 window.maxsize(400, 300)
 
-# Creazione del frame dedicato agli host
-hosts_frame = tkinter.Frame(window, width=50, background="white")
-hosts_frame.pack(side=tkinter.LEFT, fill=tkinter.BOTH)
+# Creazione dello spazio dedicato a mostrare gli host
+hosts_container = ScrollableFrame(window, width=200)
+hosts_container.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True)
+
+input_container = tkinter.Frame(window)
+input_container.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True)
 
 # Creazione del label di indicazione
-indication_label = tkinter.Label(window, text="Inserire un hostname")
+indication_label = tkinter.Label(input_container, text="Inserire un hostname")
 indication_label.pack()
 
 # Creazione dell'Entry dove inserire l'hostname
 input_hostname = tkinter.StringVar()
-hostname_field = tkinter.Entry(window, textvariable=input_hostname)
+hostname_field = tkinter.Entry(input_container, textvariable=input_hostname)
 hostname_field.pack()
 
 # Premere invio nell'Entry è come premere il pulsante
-hostname_field.bind("<Return>", add_host)
+hostname_field.bind("<Return>", add_host_label)
 
 # Creazione del pulsante che aggiunge l'hostname
-add_button = tkinter.Button(window, text="Aggiungi", command=add_host)
+add_button = tkinter.Button(input_container, text="Aggiungi", command=add_host_label)
 add_button.pack()
 
 tkinter.mainloop()
