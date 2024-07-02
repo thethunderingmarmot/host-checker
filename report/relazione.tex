@@ -1,14 +1,62 @@
-\documentclass[a4paper,12pt]{report}
+\documentclass[a4paper]{report}
 \usepackage{graphicx} % Required for inserting images
+\usepackage[italian]{babel}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage[dvipsnames]{xcolor}
 
-\title{Relazione sul progetto "Host Checker" \\ Programmazione di Reti}
+\title{Relazione sul progetto "Host Checker" \\ Traccia 3 - Monitoraggio di Rete}
 \author{Tommaso De Tommaso}
-\date{July 2024}
+\date{2 luglio 2024}
 
 \begin{document}
 
 \maketitle
 
-\section{Introduction}
+\chapter{Introduzione}
+
+\section{Consegna}
+Realizzare uno script Python per monitorare lo stato di una rete, controllando la disponibilità di uno o più host tramite il protocollo ICMP (ping). Lo script deve consentire all'utente di specificare gli indirizzi IP degli host da monitorare e deve visualizzare lo stato (online/offline) di ciascun host.
+
+\section{Soluzione}
+L'applicazione assolve la consegna utilizzando i socket per inviare pacchetti ICMP ed il multithreading per farlo contemporaneamente a più host.
+
+\chapter{Documentazione}
+\section{Funzionamento di base}
+\begin{figure}[h!]
+\begin{minipage}{.5\textwidth}
+    \centering
+    \includegraphics[width=0.5\linewidth]{image.png}
+\end{minipage}
+\begin{minipage}{.5\textwidth}
+    \centering
+    \includegraphics[width=0.5\linewidth]{image2.png}
+\end{minipage}
+\end{figure}
+L'applicazione si presenta come in figura: una finestra che contiente una casella di testo, un pulsante ed una zona (all'inizio vuota) dove appariranno i vari host da controllare.
+
+Ogni host aggiunto verrà visualizzato come una riga di testo colorata che ne indicherà l'hostname ed il suo stato.
+
+La colorazione delle righe di testo accompagna la dicitura fornendo un feedback più immediato: 
+\begin{itemize}
+    \item \colorbox{TealBlue}{\textbf{blu} indica l'attesa di una risposta}
+    \item \colorbox{Green}{\textbf{verde} indica che l'host è online}
+    \item \colorbox{Gray}{\textbf{grigio} indica che l'host è offline}
+    \item \colorbox{Red}{\textbf{rosso} indica il verificarsi di un problema}
+\end{itemize}
+
+\subsection{Istruzioni}
+E' necessario aver installato \href{https://www.python.org/}{Python} per proseguire. Una volta eseguito lo script, l'aggiunta di un host è molto semplice, basterà scrivere il suo hostname nella apposita casella di testo e poi premere Invio sulla tastiera, oppure sul pulsante "Aggiungi".
+
+\newpage
+\section{Funzionamento avanzato}
+Lo script usa solo librerie già incluse in Python: l'interfaccia grafica è stata realizzata con la libreria \textit{tkinter}, sono stati utilizzati i socket forniti dall'omonima libreria \textit{socket}, la costruzione del pacchetto ICMP avviene utilizzando strumenti dalla libreria \textit{struct}, mentre il multithreading è reso possibile dalla libreria \textit{threading}.
+
+Quello che avviene dietro le quinte è che ad ogni pressione di Invio, o del pulsante "Aggiungi", viene creato un thread che invia un pacchetto ICMP all'host, poi aspetta massimo 5 secondi per una risposta e, se la riceve, l'host viene contrassegnato come online; in caso contrario, l'host viene contrassegnato come offline. A questo punto il thread rimane in attesa per altri 5 secondi prima di ripetere tutto, finché l'applicazione non viene chiusa.
+
+Infatti, se si dovesse aggiungere un host che è online al momento dell'inserimento, ma che successivamente diventa offline, si potrà notare come, entro massimo una decina di secondi, l'applicazione ne aggiornerà lo stato senza problemi.
+
+\subsection{Dettagli}
+Durante la costruzione del pacchetto ICMP è necessario includere il suo checksum nel pacchetto stesso, questo viene calcolato con una piccola, ma complessa funzione denominata \textit{get\_checksum} che segue le direttive specificate in \href{https://datatracker.ietf.org/doc/html/rfc1071}{RFC1071}.
 
 \end{document}
