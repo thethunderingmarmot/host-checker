@@ -109,7 +109,7 @@ def add_host(event = None):
 hosts_list = []
 
 window = tkinter.Tk()
-window.title("nmap-clone")
+window.title("host-checker")
 window.minsize(400, 300)
 window.maxsize(400, 300)
 
