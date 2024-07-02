@@ -77,7 +77,7 @@ class Host:
 
     # Esegue continui ping in un nuovo thread
     def check_always_threaded(self):
-        self.linked_thread = threading.Thread(target=self.check)
+        self.linked_thread = threading.Thread(target=self.check_always)
         self.linked_thread.daemon = True
         self.linked_thread.start()
 
@@ -99,7 +99,7 @@ def add_host(event = None):
     new_label = tkinter.Label(hosts_frame, text=hostname + " - waiting", background="cadet blue")
     new_label.pack()
 
-    # Viene creato un Host a cui si passa una lambda che gestirà l'aggiornamento della label
+    # Viene creato un oggetto Host a cui si passa una lambda che gestirà l'aggiornamento della label
     new_host = Host(hostname, timeout, lambda host: update_label(new_label, host))
     # Si inizia a fare il check continuo in un altro thread sull'Host
     new_host.check_always_threaded()
