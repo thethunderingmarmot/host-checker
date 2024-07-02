@@ -37,10 +37,10 @@ class utils:
         icmp_socket.settimeout(5)
         # Creazione del pacchetto ICMP
         icmp_packet = utils.get_icmp_packet()
-        # Invio del pacchetto ICMP all'host
-        icmp_socket.sendto(icmp_packet, (hostname, 0))
         
         try:
+            # Invio del pacchetto ICMP all'host
+            icmp_socket.sendto(icmp_packet, (hostname, 0))
             # Se c'è risposta, viene recuperata
             response, _ = icmp_socket.recvfrom(1024)
             # Si prende il parametro "type" dal pacchetto di risposta 
@@ -54,7 +54,7 @@ class utils:
                 return utils.Status.OFFLINE
         except TimeoutError:
             return utils.Status.OFFLINE
-        except socket.error:
+        except Exception:
             return utils.Status.ERROR
     
 class Host:
@@ -109,6 +109,7 @@ def add_host(event = None):
     # Si svuota il valore inserito nell'Entry
     input_hostname.set("")
 
+# ----------------------------------------------------------------------------------------------------------
 
 # Secondi di attesa tra un ping e l'altro
 timeout = 5
