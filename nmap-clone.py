@@ -35,10 +35,10 @@ class utils:
         icmp_socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
         # Creazione del pacchetto ICMP
         icmp_packet = utils.get_icmp_packet()
-        # Invio del pacchetto ICMP all'host
-        icmp_socket.sendto(icmp_packet, (hostname, 0))
 
         try:
+            # Invio del pacchetto ICMP all'host
+            icmp_socket.sendto(icmp_packet, (hostname, 0))
             # Se c'è risposta, viene recuperata
             response, _ = icmp_socket.recvfrom(1024)
             # Si prende il parametro "type" dal pacchetto di risposta 
@@ -80,11 +80,11 @@ class Host:
 # Gestisce l'aggiornamento di una label in base al cambio di stato di un Host
 def update_label(label:tkinter.Label, host: Host):
     if(host.status == utils.Status.ONLINE):
-        label.config(text=host.hostname + " - online")
+        label.config(text=host.hostname + " - online", background="lime green")
     elif(host.status == utils.Status.OFFLINE):
-        label.config(text=host.hostname + " - offline")
+        label.config(text=host.hostname + " - offline", background="dim gray")
     elif(host.status == utils.Status.ERROR):
-        label.config(text=host.hostname + " - error")
+        label.config(text=host.hostname + " - error", background="orange red")
 
 # Gestisce l'aggiunta di un nuovo host
 def add_host(event = None):
@@ -92,7 +92,7 @@ def add_host(event = None):
     hostname = input_hostname.get()
 
     # Viene creata una nuova Label che mostrera lo stato dell'host
-    new_label = tkinter.Label(hosts_frame, text=hostname + " - waiting")
+    new_label = tkinter.Label(hosts_frame, text=hostname + " - waiting", background="cadet blue")
     new_label.pack()
 
     # Viene creato un Host a cui si passa una lambda che gestirà l'aggiornamento della label
@@ -114,12 +114,12 @@ window.minsize(400, 300)
 window.maxsize(400, 300)
 
 hosts_frame = tkinter.Frame(window, width=50, background="white")
-hosts_frame.pack(side=tkinter.LEFT)
+hosts_frame.pack(side=tkinter.LEFT, fill=tkinter.BOTH)
 
 hosts_label = tkinter.Label(hosts_frame, text="Hosts")
 hosts_label.pack()
 
-title_label = tkinter.Label(window, text="Network mapping tool")
+title_label = tkinter.Label(window, text="Inserire un hostname")
 title_label.pack()
 
 input_hostname = tkinter.StringVar()
